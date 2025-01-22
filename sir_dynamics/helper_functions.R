@@ -1,6 +1,5 @@
 # This file compiles and plots an odin model 
 library(odin)
-library(tidyverse)
 
 run_sir_model = function(N, I_init, beta, sigma, max_t){
   # The file name of the model

@@ -1,6 +1,8 @@
 library(shiny)
 library(bslib)
 library(dplyr)
+library(ggplot2)
+library(tidyr)
 
 source("helper_functions.R")
 
@@ -66,7 +68,7 @@ ui <- page_navbar(
                        class = "centerFigure",
                        tags$img(
                          src = "sir.png",
-                         width = 600,
+                         width = 500,
                          alt = "SIR model flow diagram"
                        ),
                        tags$figcaption("SIR model flow diagram")
@@ -124,7 +126,7 @@ ui <- page_navbar(
                 ),
                 sliderInput(
                   inputId = "gamma",
-                  label = "Progression to infection rate (\\( \\sigma \\)):",
+                  label = "Progression to infection rate (\\( \\gamma \\)):",
                   min = 0.0001,
                   max = 1,
                   value = 0.5
@@ -150,7 +152,7 @@ ui <- page_navbar(
                        class = "centerFigure",
                        tags$img(
                          src = "seir.png",
-                         width = 600,
+                         width = 500,
                          alt = "SEIR model flow diagram"
                        ),
                        tags$figcaption("SEIR model flow diagram")
@@ -203,11 +205,15 @@ server <- function(input, output) {
       filter(y_long, variable %in% input$trend_sir)
     })
     
+    my_colors = c("#F8766D", "#7CAE00", "#00BFC4")
+    names(my_colors) <-  rev(unique(y_long$variable))  
+    
     # plot the selected trends
     ggplot(filtered_data()) +
-      geom_line(aes(t, value, col = variable), size = 2) + 
+      geom_line(aes(t, value, col = variable), linewidth = 2) + 
       scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
       scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
+      scale_color_manual(values = my_colors) +
       xlab("Time") + ylab("Number of people") +
       theme_bw() +
       theme(legend.title=element_blank(), 
@@ -246,6 +252,9 @@ server <- function(input, output) {
                     value = value, 
                     -t)
     
+    my_colors_seir = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
+    names(my_colors_seir) <-  rev(unique(y_long$variable))
+    
     ## filter the data
     filtered_data <- reactive({
       filter(y_long, variable %in% input$trend_seir)
@@ -253,9 +262,10 @@ server <- function(input, output) {
     
     # plot the selected trends
     ggplot(filtered_data()) +
-      geom_line(aes(t, value, col = variable), size = 2) + 
+      geom_line(aes(t, value, col = variable), linewidth = 2) + 
       scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
       scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
+      scale_color_manual(values = my_colors_seir) +
       xlab("Time") + ylab("Number of people") +
       theme_bw() +
       theme(legend.title=element_blank(), 
