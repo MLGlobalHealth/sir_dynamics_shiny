@@ -242,7 +242,7 @@ ui <- page_navbar(
                      tags$figure(
                        class = "centerFigure",
                        tags$img(
-                         src = "seir.png",
+                         src = "seirs.png",
                          width = 500,
                          alt = "SEIRS model flow diagram"
                        ),
