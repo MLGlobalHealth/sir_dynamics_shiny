@@ -19,13 +19,13 @@ run_child_vaccination = function(N, I_init, beta, sigma, theta, mu, u, max_t){
   return (y)
 }
 
-run_seir_model = function(N, I_init, beta, sigma, gamma, max_t){
+run_emergency_vaccination = function(N, I_init, beta, sigma, u, max_t){
   # The file name of the model
-  model <- "seir_model.R"
+  model <- "emergency_vaccination.R"
   
   # Compiles the model
   generator <- odin::odin(model)
-  mod <- generator$new(user = list(sigma = sigma, beta = beta, gamma = gamma, 
+  mod <- generator$new(user = list(sigma = sigma, beta = beta, u = u, 
                                    N = N, I_init = I_init))
   
   

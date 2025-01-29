@@ -49,37 +49,37 @@ ui <- page_navbar(
                 sliderInput(
                   inputId = "sigma",
                   label = "Recovery rate (\\( \\sigma \\)):",
-                  min = 0.0001,
+                  min = 0,
                   max = 1,
-                  value = 0.1
+                  value = 0.3
                 ),
                 sliderInput(
                   inputId = "theta",
                   label = "Birth rate (\\( \\theta \\)):",
-                  min = 0.0001,
-                  max = 1,
-                  value = 0.01
+                  min = 0,
+                  max = 0.5,
+                  value = 0.05
                 ),
                 sliderInput(
                   inputId = "mu",
                   label = "Death rate (\\( \\mu \\)):",
-                  min = 0.0001,
-                  max = 1,
-                  value = 0.1
+                  min = 0,
+                  max = 0.25,
+                  value = 0.01
                 ),
                 sliderInput(
                   inputId = "u",
                   label = "Proportion of children vaccinated (\\( u \\)):",
                   min = 0,
                   max = 1,
-                  value = 0.5
+                  value = 0.25
                 ),
                 sliderInput(
                   inputId = "max_t",
                   label = "Maximum time:",
                   min = 20,
                   max = 1000,
-                  value = 100
+                  value = 200
                 )
               ),
               layout_columns(
@@ -100,7 +100,7 @@ ui <- page_navbar(
                      
                      checkboxGroupInput(inputId = "trend_childhood_vaccination", 
                                         label = "Select which trends to plot:", 
-                                        choices = c("V", "S", "I", "R"),
+                                        choices = c("S", "V", "I", "R"),
                                         width = "100%",
                                         inline = TRUE)
                      
@@ -144,16 +144,16 @@ ui <- page_navbar(
                   value = 2
                 ),
                 sliderInput(
-                  inputId = "gamma",
-                  label = "Progression to infection rate (\\( \\gamma \\)):",
-                  min = 0.0001,
+                  inputId = "u",
+                  label = "Vaccination rate (\\( u \\)):",
+                  min = 0,
                   max = 1,
                   value = 0.5
                 ),
                 sliderInput(
                   inputId = "sigma",
                   label = "Recovery rate (\\( \\sigma \\)):",
-                  min = 0.0001,
+                  min = 0,
                   max = 1,
                   value = 0.1
                 ),
@@ -172,19 +172,19 @@ ui <- page_navbar(
                        tags$img(
                          src = "seir.png",
                          width = 500,
-                         alt = "SEIR model flow diagram"
+                         alt = "Emergency vaccination flow diagram"
                        ),
-                       tags$figcaption("SEIR model flow diagram")
+                       tags$figcaption("Emergency vaccination model flow diagram")
                      ),
-                     uiOutput("show_code_seir")),
+                     uiOutput("show_code_emergency_vaccination")),
                 
                 card(card_header("Plot of dynamics"),
-                     # Output: Histogram ----
-                     plotOutput(outputId = "distPlot_seir"),
+    
+                     plotOutput(outputId = "distPlot_emergency_vaccination"),
                      
-                     checkboxGroupInput(inputId = "trend_seir", 
+                     checkboxGroupInput(inputId = "trend_emergency_vaccination", 
                                         label = "Select which trends to plot:", 
-                                        choices = c("S", "E", "I", "R"),
+                                        choices = c("S", "V", "I", "R"),
                                         width = "100%",
                                         inline = TRUE)
                      
@@ -350,27 +350,27 @@ server <- function(input, output) {
     )
   })
   
-  # Code for SEIR plot
-  output$distPlot_seir <- renderPlot({
+  # Code for emergency vaccination plot
+  output$distPlot_emergency_vaccination <- renderPlot({
     
-    y = run_seir_model(N = input$N, 
-                       I_init = input$I_init, 
-                       beta = input$beta,
-                       gamma = input$gamma,
-                       sigma = input$sigma,
-                       max_t = input$max_t)
+    y = run_emergency_vaccination(N = input$N, 
+                                  I_init = input$I_init, 
+                                  beta = input$beta,
+                                  u = input$u,
+                                  sigma = input$sigma,
+                                  max_t = input$max_t)
     
     y_long = gather(data.frame(y), 
                     key = variable, 
                     value = value, 
                     -t)
     
-    my_colors_seir = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
-    names(my_colors_seir) <-  rev(unique(y_long$variable))
+    my_colors_emergency_vaccination = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
+    names(my_colors_emergency_vaccination) <-  rev(unique(y_long$variable))
     
     ## filter the data
     filtered_data <- reactive({
-      filter(y_long, variable %in% input$trend_seir)
+      filter(y_long, variable %in% input$trend_emergency_vaccination)
     })
     
     # plot the selected trends
@@ -378,7 +378,7 @@ server <- function(input, output) {
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
       scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
       scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
-      scale_color_manual(values = my_colors_seir) +
+      scale_color_manual(values = my_colors_emergency_vaccination) +
       xlab("Time") + ylab("Number of people") +
       theme_bw() +
       theme(legend.title=element_blank(), 
@@ -387,9 +387,9 @@ server <- function(input, output) {
             text = element_text(size = 16))
   })
   
-  # Code to show SEIR code
-  output$show_code_seir <- renderUI({
-    raw_lines <- readLines("seir_model.R")
+  # Code to show Emergency Vaccination code
+  output$show_code_emergency_vaccination <- renderUI({
+    raw_lines <- readLines("emergency_vaccination.R")
     # insert line breaks for HTML
     code_joined <- stringi::stri_join(raw_lines, collapse = "\n")
     

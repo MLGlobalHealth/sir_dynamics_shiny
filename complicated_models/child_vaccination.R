@@ -6,8 +6,8 @@ deriv(I) <- beta * S * I / N - sigma * I - mu * I
 deriv(R) <- sigma * I - mu * R
 
 # initial conditions
-initial(V) <- (N - I_init) / 2
-initial(S) <- (N - I_init) / 2
+initial(V) <- u * (N - I_init) 
+initial(S) <- (1 - u) * (N - I_init)
 initial(I) <- I_init
 initial(R) <- 0
 
