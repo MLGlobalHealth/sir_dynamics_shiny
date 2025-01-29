@@ -37,14 +37,18 @@ run_emergency_vaccination = function(N, I_init, beta, sigma, u, max_t){
   return (y)
 }
 
-run_seirs_model = function(N, I_init, beta, sigma, gamma, alpha, max_t){
+run_heterogeneity = function(N_A, N_B, I_init_A, I_init_B, beta_AA, beta_BA, 
+                             beta_AB, beta_BB, sigma,  max_t){
   # The file name of the model
-  model <- "seirs_model.R"
+  model <- "heterogeneity.R"
   
   # Compiles the model
   generator <- odin::odin(model)
-  mod <- generator$new(user = list(sigma = sigma, beta = beta, gamma = gamma, 
-                                   alpha = alpha, N = N, I_init = I_init))
+  mod <- generator$new(user = list(sigma = sigma, beta_AA = beta_AA, 
+                                   beta_BA = beta_BA, beta_AB = beta_AB, 
+                                   beta_BB = beta_BB, 
+                                   N_A = N_A, N_B = N_B,
+                                   I_init_A = I_init_A, I_init_B = I_init_B))
   
   
   # Set time variable

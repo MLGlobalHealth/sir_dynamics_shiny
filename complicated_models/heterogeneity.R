@@ -1,22 +1,27 @@
 
 # variables
-deriv(S_A) <- -beta_AA * S * I_A / N_A 
-deriv(I_A) <- beta * S * I / N - sigma * I
-deriv(R_A) <- sigma * I   
-deriv(S_B) <- -beta * S * I / N 
-deriv(I_B) <- beta * S * I / N - sigma * I
-deriv(R_B) <- sigma * I   
+deriv(S_A) <- - beta_AA * I_A / N_A * S_A - beta_BA * I_B / N_B * S_A
+deriv(I_A) <- beta_AA * I_A / N_A * S_A + beta_BA * I_B / N_B * S_A - sigma * I_A
+deriv(R_A) <- sigma * I_A   
+deriv(S_B) <- - beta_AB * I_A / N_A * S_B - beta_BB * I_B / N_B * S_B
+deriv(I_B) <- beta_AB * I_A / N_A * S_B + beta_BB * I_B / N_B * S_B - sigma * I_B
+deriv(R_B) <- sigma * I_B   
 
 # initial conditions
-initial(S) <- N - I_init
-initial(E) <- 0
-initial(I) <- I_init
-initial(R) <- 0
+initial(S_A) <- N_A - I_init_A
+initial(I_A) <- I_init_A
+initial(R_A) <- 0
+initial(S_B) <- N_B - I_init_B
+initial(I_B) <- I_init_B
+initial(R_B) <- 0
 
 # parameters
 N_A <- user(1000)
 N_B <- user(1000)
-I_init <- user(1)
-beta <- user(2)
-gamma <- user(0.1)
+I_init_A <- user(1)
+I_init_B <- user(1)
+beta_AA <- user(2)
+beta_BA <- user(2)
+beta_AB <- user(2)
+beta_BB <- user(2)
 sigma <- user(0.5)

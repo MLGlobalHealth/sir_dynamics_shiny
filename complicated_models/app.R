@@ -87,7 +87,7 @@ ui <- page_navbar(
                      tags$figure(
                        class = "centerFigure",
                        tags$img(
-                         src = "sir.png",
+                         src = "child_vaccination.png",
                          width = 500,
                          alt = "Childhood vaccination model"
                        ),
@@ -108,7 +108,7 @@ ui <- page_navbar(
                 )))),
   nav_panel(title = "Example 2",
             page_sidebar(# App title
-              titlePanel(title =  "Emergency vaccination"),
+              titlePanel(title = "Emergency vaccination"),
               
               # Enables MathJax notation
               withMathJax(),
@@ -170,7 +170,7 @@ ui <- page_navbar(
                      tags$figure(
                        class = "centerFigure",
                        tags$img(
-                         src = "seir.png",
+                         src = "emergency_vaccination.png",
                          width = 500,
                          alt = "Emergency vaccination flow diagram"
                        ),
@@ -207,43 +207,64 @@ ui <- page_navbar(
                                   "))
                 ),
                 sliderInput(
-                  inputId = "N",
-                  label = "Number of people (N):",
+                  inputId = "N_A",
+                  label = "Number of people in population A (N_A):",
                   min = 1,
                   max = 1000,
                   value = 100
                 ),
                 sliderInput(
-                  inputId = "I_init",
-                  label = "Initial number of infected people (I_init):",
+                  inputId = "N_B",
+                  label = "Number of people in population B (N_B):",
+                  min = 1,
+                  max = 1000,
+                  value = 100
+                ),
+                sliderInput(
+                  inputId = "I_init_A",
+                  label = "Initial number of infected people in population A (I_init_A):",
                   min = 1,
                   max = 100,
                   value = 1
                 ),
                 sliderInput(
-                  inputId = "beta",
-                  label = 'Infection parameter (\\( \\beta \\)):',
+                  inputId = "I_init_B",
+                  label = "Initial number of infected people in population B (I_init_B):",
+                  min = 1,
+                  max = 100,
+                  value = 1
+                ),
+                sliderInput(
+                  inputId = "beta_AA",
+                  label = 'Infection parameter from group A to A (\\( \\beta_{AA} \\)):',
                   min = 0.1,
                   max = 10,
                   value = 2
                 ),
                 sliderInput(
-                  inputId = "gamma",
-                  label = "Progression to infection rate (\\( \\gamma \\)):",
-                  min = 0.0001,
-                  max = 1,
-                  value = 0.5
+                  inputId = "beta_BA",
+                  label = 'Infection parameter from group B to A (\\( \\beta_{BA} \\)):',
+                  min = 0.1,
+                  max = 10,
+                  value = 2
+                ),
+                sliderInput(
+                  inputId = "beta_AB",
+                  label = 'Infection parameter from group A to B (\\( \\beta_{AB} \\)):',
+                  min = 0.1,
+                  max = 10,
+                  value = 2
+                ),
+                sliderInput(
+                  inputId = "beta_BB",
+                  label = 'Infection parameter from group B to B (\\( \\beta_{BB} \\)):',
+                  min = 0.1,
+                  max = 10,
+                  value = 2
                 ),
                 sliderInput(
                   inputId = "sigma",
                   label = "Recovery rate (\\( \\sigma \\)):",
-                  min = 0.0001,
-                  max = 1,
-                  value = 0.1
-                ),
-                sliderInput(
-                  inputId = "alpha",
-                  label = "Waning of immunity rate (\\( \\alpha \\)):",
                   min = 0.0001,
                   max = 1,
                   value = 0.1
@@ -261,21 +282,19 @@ ui <- page_navbar(
                      tags$figure(
                        class = "centerFigure",
                        tags$img(
-                         src = "seirs.png",
+                         src = "heterogeneity.png",
                          width = 500,
-                         alt = "SEIRS model flow diagram"
+                         alt = "Two population SIR flow diagram"
                        ),
-                       tags$figcaption("SEIRS model flow diagram")
+                       tags$figcaption("Two population SIR model flow diagram")
                      ),
-                     uiOutput("show_code_seirs")),
-                
+                     uiOutput("show_code_heterogeneity")),
                 card(card_header("Plot of dynamics"),
-                     # Output: Histogram ----
-                     plotOutput(outputId = "distPlot_seirs"),
+                     plotOutput(outputId = "distPlot_heterogeneity"),
                      
-                     checkboxGroupInput(inputId = "trend_seirs", 
+                     checkboxGroupInput(inputId = "trend_heterogeneity", 
                                         label = "Select which trends to plot:", 
-                                        choices = c("S", "E", "I", "R"),
+                                        choices = c("S_A", "S_B", "I_A", "I_B", "R_A", "R_B"),
                                         width = "100%",
                                         inline = TRUE)
                      
@@ -402,28 +421,31 @@ server <- function(input, output) {
     )
   })
   
-  # Code for SEIRS plot
-  output$distPlot_seirs <- renderPlot({
+  # Code for heterogeneity plot
+  output$distPlot_heterogeneity <- renderPlot({
     
-    y = run_seirs_model(N = input$N, 
-                       I_init = input$I_init, 
-                       beta = input$beta,
-                       gamma = input$gamma,
-                       sigma = input$sigma,
-                       alpha = input$alpha,
-                       max_t = input$max_t)
+    y = run_heterogeneity(N_A = input$N_A,
+                          N_B = input$N_B,
+                          I_init_A = input$I_init_A, 
+                          I_init_B = input$I_init_B, 
+                          beta_AA = input$beta_AA,
+                          beta_BA = input$beta_BA,
+                          beta_AB = input$beta_AB,
+                          beta_BB = input$beta_BB,
+                          sigma = input$sigma,
+                          max_t = input$max_t)
     
     y_long = gather(data.frame(y), 
                     key = variable, 
                     value = value, 
                     -t)
     
-    my_colors_seirs = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
-    names(my_colors_seirs) <-  rev(unique(y_long$variable))
+    my_colors_heterogeneity = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF", "#619CFF", "#F564E3")
+    names(my_colors_heterogeneity) <-  rev(unique(y_long$variable))
     
     ## filter the data
     filtered_data <- reactive({
-      filter(y_long, variable %in% input$trend_seirs)
+      filter(y_long, variable %in% input$trend_heterogeneity)
     })
     
     # plot the selected trends
@@ -431,7 +453,7 @@ server <- function(input, output) {
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
       scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
       scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
-      scale_color_manual(values = my_colors_seirs) +
+      scale_color_manual(values = my_colors_heterogeneity) +
       xlab("Time") + ylab("Number of people") +
       theme_bw() +
       theme(legend.title=element_blank(), 
@@ -440,9 +462,9 @@ server <- function(input, output) {
             text = element_text(size = 16))
   })
   
-  # Code to show SEIRS code
-  output$show_code_seirs <- renderUI({
-    raw_lines <- readLines("seirs_model.R")
+  # Code to show heterogeneity code
+  output$show_code_heterogeneity <- renderUI({
+    raw_lines <- readLines("heterogeneity.R")
     # insert line breaks for HTML
     code_joined <- stringi::stri_join(raw_lines, collapse = "\n")
     
