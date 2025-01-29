@@ -7,11 +7,11 @@ library(tidyr)
 source("helper_functions.R")
 
 ui <- page_navbar(
-  title = span(img(src = "UoB_RGB_24.svg", height = 35), "  Compartmental model explorer tool"),
+  title = span(img(src = "UoB_RGB_24.svg", height = 35), "  More complicated models explorer tool"),
   bg = "#FDEDEC",
-  nav_panel(title = "SIR",
+  nav_panel(title = "Example 1",
             page_sidebar(# App title
-              titlePanel(title = "SIR (Susceptible - Infected - Recovered) dynamics"),
+              titlePanel(title = "Childhood vaccination"),
               
               # Enables MathJax notation
               withMathJax(),
@@ -54,6 +54,27 @@ ui <- page_navbar(
                   value = 0.1
                 ),
                 sliderInput(
+                  inputId = "theta",
+                  label = "Birth rate (\\( \\theta \\)):",
+                  min = 0.0001,
+                  max = 1,
+                  value = 0.01
+                ),
+                sliderInput(
+                  inputId = "mu",
+                  label = "Death rate (\\( \\mu \\)):",
+                  min = 0.0001,
+                  max = 1,
+                  value = 0.1
+                ),
+                sliderInput(
+                  inputId = "u",
+                  label = "Proportion of children vaccinated (\\( u \\)):",
+                  min = 0,
+                  max = 1,
+                  value = 0.5
+                ),
+                sliderInput(
                   inputId = "max_t",
                   label = "Maximum time:",
                   min = 20,
@@ -68,27 +89,26 @@ ui <- page_navbar(
                        tags$img(
                          src = "sir.png",
                          width = 500,
-                         alt = "SIR model flow diagram"
+                         alt = "Childhood vaccination model"
                        ),
-                       tags$figcaption("SIR model flow diagram")
+                       tags$figcaption("Childhood vaccination model diagram")
                      ),
-                     uiOutput("show_code_sir")),
+                     uiOutput("show_code_childhood_vaccination")),
                 
                 card(card_header("Plot of dynamics"),
-                     # Output: Histogram ----
-                     plotOutput(outputId = "distPlot_sir"),
+                     plotOutput(outputId = "distPlot_childhood_vaccination"),
                      
-                     checkboxGroupInput(inputId = "trend_sir", 
+                     checkboxGroupInput(inputId = "trend_childhood_vaccination", 
                                         label = "Select which trends to plot:", 
-                                        choices = c("S", "I", "R"),
+                                        choices = c("V", "S", "I", "R"),
                                         width = "100%",
                                         inline = TRUE)
                      
                      
                 )))),
-  nav_panel(title = "SEIR",
+  nav_panel(title = "Example 2",
             page_sidebar(# App title
-              titlePanel(title =  "SEIR (Susceptible - Exposed - Infected - Recovered) dynamics"),
+              titlePanel(title =  "Emergency vaccination"),
               
               # Enables MathJax notation
               withMathJax(),
@@ -170,9 +190,9 @@ ui <- page_navbar(
                      
                      
                 )))),
-  nav_panel(title = "SEIRS",
+  nav_panel(title = "Example 3",
             page_sidebar(# App title
-              titlePanel(title =  "SEIRS (Susceptible - Exposed - Infected - Recovered - Susceptible) dynamics"),
+              titlePanel(title =  "Example of two population heterogeneity"),
               
               # Enables MathJax notation
               withMathJax(),
@@ -276,14 +296,17 @@ ui <- page_navbar(
 
 
 server <- function(input, output) {
-  # Code for SIR plot
-  output$distPlot_sir <- renderPlot({
+  # Code for childhood vaccination plot
+  output$distPlot_childhood_vaccination <- renderPlot({
     
-    y = run_sir_model(N = input$N, 
-                      I_init = input$I_init, 
-                      beta = input$beta, 
-                      sigma = input$sigma,
-                      max_t = input$max_t)
+    y = run_child_vaccination(N = input$N, 
+                              I_init = input$I_init,
+                              beta = input$beta, 
+                              sigma = input$sigma,
+                              theta = input$theta,
+                              mu = input$mu,
+                              u = input$u,
+                              max_t = input$max_t)
     
     y_long = gather(data.frame(y), 
                     key = variable, 
@@ -292,10 +315,10 @@ server <- function(input, output) {
 
     ## filter the data
     filtered_data <- reactive({
-      filter(y_long, variable %in% input$trend_sir)
+      filter(y_long, variable %in% input$trend_childhood_vaccination)
     })
     
-    my_colors = c("#F8766D", "#7CAE00", "#00BFC4")
+    my_colors = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
     names(my_colors) <-  rev(unique(y_long$variable))  
     
     # plot the selected trends
@@ -313,8 +336,8 @@ server <- function(input, output) {
   })
   
   # Code to show SIR code
-  output$show_code_sir <- renderUI({
-    raw_lines <- readLines("sir_model.R")
+  output$show_code_childhood_vaccination <- renderUI({
+    raw_lines <- readLines("child_vaccination.R")
     # insert line breaks for HTML
     code_joined <- stringi::stri_join(raw_lines, collapse = "\n")
     
