@@ -1,7 +1,7 @@
 
 # variables
-deriv(S) <- if (S > 0) - beta * S * I / N - u else - beta * S * I / N
-deriv(V) <- if (S > 0) u else 0
+deriv(S) <- - beta * S * I / N - u * S
+deriv(V) <- u * S
 deriv(I) <-  beta * S * I / N - sigma * I
 deriv(R) <- sigma * I  
 

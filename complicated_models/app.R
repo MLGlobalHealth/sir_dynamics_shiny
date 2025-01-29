@@ -395,7 +395,7 @@ server <- function(input, output) {
     # plot the selected trends
     ggplot(filtered_data()) +
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
-      scale_y_continuous(expand = c(0, 0), limits = c(0, input$N_init)) + #
+      scale_y_continuous(expand = c(0, 0), limits = c(-0.1, input$N_init)) +
       scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
       scale_color_manual(values = my_colors_emergency_vaccination) +
       xlab("Time") + ylab("Number of people") +
