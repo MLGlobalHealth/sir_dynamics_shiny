@@ -26,8 +26,8 @@ ui <- page_navbar(
                                   "))
                 ),
                 sliderInput(
-                  inputId = "N",
-                  label = "Number of people (N):",
+                  inputId = "N_init",
+                  label = "Initial number of people (N_init):",
                   min = 1,
                   max = 1000,
                   value = 100
@@ -100,7 +100,7 @@ ui <- page_navbar(
                      
                      checkboxGroupInput(inputId = "trend_childhood_vaccination", 
                                         label = "Select which trends to plot:", 
-                                        choices = c("S", "V", "I", "R"),
+                                        choices = c("S", "V", "I", "R", "N"),
                                         width = "100%",
                                         inline = TRUE)
                      
@@ -299,7 +299,7 @@ server <- function(input, output) {
   # Code for childhood vaccination plot
   output$distPlot_childhood_vaccination <- renderPlot({
     
-    y = run_child_vaccination(N = input$N, 
+    y = run_child_vaccination(N_init = input$N_init, 
                               I_init = input$I_init,
                               beta = input$beta, 
                               sigma = input$sigma,
@@ -318,7 +318,7 @@ server <- function(input, output) {
       filter(y_long, variable %in% input$trend_childhood_vaccination)
     })
     
-    my_colors = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
+    my_colors = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF", "#619CFF")
     names(my_colors) <-  rev(unique(y_long$variable))  
     
     # plot the selected trends
@@ -335,7 +335,7 @@ server <- function(input, output) {
             text = element_text(size = 16))
   })
   
-  # Code to show SIR code
+  # Code to show childhood vaccination code
   output$show_code_childhood_vaccination <- renderUI({
     raw_lines <- readLines("child_vaccination.R")
     # insert line breaks for HTML
@@ -376,7 +376,7 @@ server <- function(input, output) {
     # plot the selected trends
     ggplot(filtered_data()) +
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
-      scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
+      scale_y_continuous(expand = c(0, 0), limits = c(0, input$N_init)) + #
       scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
       scale_color_manual(values = my_colors_emergency_vaccination) +
       xlab("Time") + ylab("Number of people") +
