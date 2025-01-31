@@ -1,6 +1,24 @@
 # This file compiles and plots an odin model 
 library(odin)
 
+run_births_deaths = function(N_init, I_init, beta, sigma, theta, mu, max_t){
+  # The file name of the model
+  model <- "births_deaths.R"
+  
+  # Compiles the model
+  generator <- odin::odin(model)
+  mod <- generator$new(user = list(sigma = sigma, beta = beta, theta = theta,
+                                   mu = mu, N_init = N_init, I_init = I_init))
+  
+  
+  # Set time variable
+  tt <- seq(0, max_t, by = 0.5)
+  
+  # Runs the model
+  y <- mod$run(tt)
+  return (y)
+}
+
 run_child_vaccination = function(N_init, I_init, beta, sigma, theta, mu, u, max_t){
   # The file name of the model
   model <- "child_vaccination.R"

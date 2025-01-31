@@ -11,7 +11,97 @@ ui <- page_navbar(
   bg = "#FDEDEC",
   nav_panel(title = "Example 1",
             page_sidebar(# App title
-              titlePanel(title = "Childhood vaccination"),
+              titlePanel(title = "Births and deaths"),
+              
+              # Enables MathJax notation
+              withMathJax(),
+              
+              # Sidebar panel for inputs 
+              sidebar = sidebar(
+                #grid text is the slide numbers
+                tags$head(
+                  tags$style(HTML(".irs-grid-text { font-size: 14px;}
+                                   .irs--shiny .irs-min,.irs--shiny .irs-max {font-size: 14px;}
+                                   .irs--shiny .irs-from,.irs--shiny .irs-to,.irs--shiny .irs-single {font-size: 14px;}
+                                  "))
+                ),
+                sliderInput(
+                  inputId = "N_init",
+                  label = "Initial number of people (N_init):",
+                  min = 1,
+                  max = 1000,
+                  value = 100
+                ),
+                sliderInput(
+                  inputId = "I_init",
+                  label = "Initial number of infected people (I_init):",
+                  min = 1,
+                  max = 100,
+                  value = 1
+                ),
+                sliderInput(
+                  inputId = "beta",
+                  label = 'Infection parameter (\\( \\beta \\)):',
+                  min = 0.1,
+                  max = 10,
+                  value = 2
+                ),
+                sliderInput(
+                  inputId = "sigma",
+                  label = "Recovery rate (\\( \\sigma \\)):",
+                  min = 0,
+                  max = 1,
+                  value = 0.3
+                ),
+                sliderInput(
+                  inputId = "theta",
+                  label = "Birth rate (\\( \\theta \\)):",
+                  min = 0,
+                  max = 0.5,
+                  value = 0.05
+                ),
+                sliderInput(
+                  inputId = "mu",
+                  label = "Death rate (\\( \\mu \\)):",
+                  min = 0,
+                  max = 0.25,
+                  value = 0.01
+                ),
+                sliderInput(
+                  inputId = "max_t",
+                  label = "Maximum time:",
+                  min = 20,
+                  max = 1000,
+                  value = 200
+                )
+              ),
+              layout_columns(
+                card(card_header("Odin model code"),
+                     tags$figure(
+                       class = "centerFigure",
+                       tags$img(
+                         src = "births_deaths.png",
+                         width = 500,
+                         alt = "Births and deaths model"
+                       ),
+                       tags$figcaption("Births and deaths model diagram")
+                     ),
+                     uiOutput("show_code_births_deaths")),
+                
+                card(card_header("Plot of dynamics"),
+                     plotOutput(outputId = "distPlot_births_deaths"),
+                     
+                     checkboxGroupInput(inputId = "trend_births_deaths", 
+                                        label = "Select which trends to plot:", 
+                                        choices = c("S", "I", "R", "N"),
+                                        width = "100%",
+                                        inline = TRUE)
+                     
+                     
+                )))),
+  nav_panel(title = "Example 2",
+            page_sidebar(# App title
+              titlePanel(title = "Infant vaccination"),
               
               # Enables MathJax notation
               withMathJax(),
@@ -69,7 +159,7 @@ ui <- page_navbar(
                 ),
                 sliderInput(
                   inputId = "u",
-                  label = "Proportion of children vaccinated (\\( u \\)):",
+                  label = "Proportion of infants vaccinated (\\( u \\)):",
                   min = 0,
                   max = 1,
                   value = 0.25
@@ -89,9 +179,9 @@ ui <- page_navbar(
                        tags$img(
                          src = "child_vaccination.png",
                          width = 500,
-                         alt = "Childhood vaccination model"
+                         alt = "Infant vaccination model"
                        ),
-                       tags$figcaption("Childhood vaccination model diagram")
+                       tags$figcaption("Infant vaccination model diagram")
                      ),
                      uiOutput("show_code_childhood_vaccination")),
                 
@@ -106,7 +196,7 @@ ui <- page_navbar(
                      
                      
                 )))),
-  nav_panel(title = "Example 2",
+  nav_panel(title = "Example 3",
             page_sidebar(# App title
               titlePanel(title = "Emergency vaccination"),
               
@@ -190,7 +280,7 @@ ui <- page_navbar(
                      
                      
                 )))),
-  nav_panel(title = "Example 3",
+  nav_panel(title = "Example 4",
             page_sidebar(# App title
               titlePanel(title =  "Example of two population heterogeneity"),
               
@@ -315,6 +405,59 @@ ui <- page_navbar(
 
 
 server <- function(input, output) {
+  # Code for childhood vaccination plot
+  output$distPlot_births_deaths <- renderPlot({
+    
+    y = run_births_deaths(N_init = input$N_init,
+                          I_init = input$I_init,
+                          beta = input$beta,
+                          sigma = input$sigma,
+                          theta = input$theta,
+                          mu = input$mu,
+                          max_t = input$max_t)
+    
+    y_long = gather(data.frame(y), 
+                    key = variable, 
+                    value = value, 
+                    -t)
+    
+    ## filter the data
+    filtered_data <- reactive({
+      filter(y_long, variable %in% input$trend_births_deaths)
+    })
+    
+    my_colors_births_deaths = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
+    names(my_colors_births_deaths) <-  rev(unique(y_long$variable))  
+    
+    # plot the selected trends
+    ggplot(filtered_data()) +
+      geom_line(aes(t, value, col = variable), linewidth = 2) + 
+      scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
+      scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
+      scale_color_manual(values = my_colors_births_deaths) +
+      xlab("Time") + ylab("Number of people") +
+      theme_bw() +
+      theme(legend.title=element_blank(), 
+            axis.text.x = element_text(size=16),
+            axis.text.y = element_text(size=16),
+            text = element_text(size = 16))
+  })
+  
+  # Code to show childhood vaccination code
+  output$show_code_births_deaths <- renderUI({
+    raw_lines <- readLines("births_deaths.R")
+    # insert line breaks for HTML
+    code_joined <- stringi::stri_join(raw_lines, collapse = "\n")
+    
+    tagList(
+      tags$pre(
+        tags$code(
+          HTML(code_joined)
+        )
+      )
+    )
+  })
+  
   # Code for childhood vaccination plot
   output$distPlot_childhood_vaccination <- renderPlot({
     
