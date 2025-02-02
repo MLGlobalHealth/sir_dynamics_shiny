@@ -1,11 +1,11 @@
 
 # variables
-deriv(S_A) <- - beta_AA * I_A / N_A * S_A - beta_BA * I_B / N_B * S_A
-deriv(I_A) <- beta_AA * I_A / N_A * S_A + beta_BA * I_B / N_B * S_A - sigma * I_A
+deriv(S_A) <- - ( beta_AA * I_A    + beta_BA * I_B ) * S_A / N_A
+deriv(I_A) <- (beta_AA * I_A + beta_BA * I_B ) * S_A / N_A - sigma * I_A
 deriv(R_A) <- sigma * I_A   
-deriv(S_B) <- - beta_AB * I_A / N_A * S_B - beta_BB * I_B / N_B * S_B
-deriv(I_B) <- beta_AB * I_A / N_A * S_B + beta_BB * I_B / N_B * S_B - sigma * I_B
-deriv(R_B) <- sigma * I_B   
+deriv(S_B) <- - ( beta_AB * I_A  + beta_BB * I_B  ) * S_B / N_B
+deriv(I_B) <- (beta_AB * I_A + beta_BB * I_B ) * S_B / N_B - sigma * I_B
+deriv(R_B) <- sigma * I_B
 
 # initial conditions
 initial(S_A) <- N_A - I_init_A
