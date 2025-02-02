@@ -25,20 +25,20 @@ ui <- page_navbar(
                                    .irs--shiny .irs-from,.irs--shiny .irs-to,.irs--shiny .irs-single {font-size: 14px;}
                                   "))
                 ),
-                sliderInput(
-                  inputId = "N_init",
-                  label = "Initial number of people (N_init):",
-                  min = 1,
-                  max = 1000,
-                  value = 100
-                ),
-                sliderInput(
-                  inputId = "I_init",
-                  label = "Initial number of infected people (I_init):",
-                  min = 1,
-                  max = 100,
-                  value = 1
-                ),
+                #sliderInput(
+                #  inputId = "N_init",
+                #  label = "Initial number of people (N_init):",
+                #  min = 1,
+                #  max = 1000,
+                #  value = 100
+                #),
+                #sliderInput(
+                #  inputId = "I_init",
+                #  label = "Initial number of infected people (I_init):",
+                #  min = 1,
+                #  max = 100,
+                #  value = 1
+                #),
                 sliderInput(
                   inputId = "beta",
                   label = 'Infection parameter (\\( \\beta \\)):',
@@ -57,15 +57,16 @@ ui <- page_navbar(
                   inputId = "theta",
                   label = "Birth rate (\\( \\theta \\)):",
                   min = 0,
-                  max = 0.5,
-                  value = 0.05
+                  max = 10,
+                  value = 1,
+                  step = 0.1
                 ),
                 sliderInput(
                   inputId = "mu",
                   label = "Death rate (\\( \\mu \\)):",
                   min = 0,
-                  max = 0.25,
-                  value = 0.01
+                  max = 0.1,
+                  value = 0.05
                 ),
                 sliderInput(
                   inputId = "max_t",
@@ -73,7 +74,15 @@ ui <- page_navbar(
                   min = 20,
                   max = 1000,
                   value = 200
+                ),
+                sliderInput(
+                  inputId = "max_y",
+                  label = "Maximum y-axis value:",
+                  min = 20,
+                  max = 1000,
+                  value = 600
                 )
+                
               ),
               layout_columns(
                 card(card_header("Odin model code"),
@@ -115,61 +124,69 @@ ui <- page_navbar(
                                    .irs--shiny .irs-from,.irs--shiny .irs-to,.irs--shiny .irs-single {font-size: 14px;}
                                   "))
                 ),
+                #sliderInput(
+                #  inputId = "N_init2",
+                #  label = "Initial number of people (N_init):",
+                #  min = 1,
+                #  max = 1000,
+                #  value = 100
+                #),
+                #sliderInput(
+                #  inputId = "I_init2",
+                #  label = "Initial number of infected people (I_init):",
+                #  min = 1,
+                #  max = 100,
+                #  value = 1
+                #),
                 sliderInput(
-                  inputId = "N_init",
-                  label = "Initial number of people (N_init):",
-                  min = 1,
-                  max = 1000,
-                  value = 100
-                ),
-                sliderInput(
-                  inputId = "I_init",
-                  label = "Initial number of infected people (I_init):",
-                  min = 1,
-                  max = 100,
-                  value = 1
-                ),
-                sliderInput(
-                  inputId = "beta",
+                  inputId = "beta2",
                   label = 'Infection parameter (\\( \\beta \\)):',
                   min = 0.1,
                   max = 10,
                   value = 2
                 ),
                 sliderInput(
-                  inputId = "sigma",
+                  inputId = "sigma2",
                   label = "Recovery rate (\\( \\sigma \\)):",
                   min = 0,
                   max = 1,
                   value = 0.3
                 ),
                 sliderInput(
-                  inputId = "theta",
+                  inputId = "theta2",
                   label = "Birth rate (\\( \\theta \\)):",
                   min = 0,
-                  max = 0.5,
+                  max = 10,
+                  value = 1,
+                  step = 0.1
+                ),
+                sliderInput(
+                  inputId = "mu2",
+                  label = "Death rate (\\( \\mu \\)):",
+                  min = 0,
+                  max = 0.1,
                   value = 0.05
                 ),
                 sliderInput(
-                  inputId = "mu",
-                  label = "Death rate (\\( \\mu \\)):",
-                  min = 0,
-                  max = 0.25,
-                  value = 0.01
-                ),
-                sliderInput(
-                  inputId = "u",
+                  inputId = "u2",
                   label = "Proportion of infants vaccinated (\\( u \\)):",
                   min = 0,
                   max = 1,
                   value = 0.25
                 ),
                 sliderInput(
-                  inputId = "max_t",
+                  inputId = "max_t2",
                   label = "Maximum time:",
                   min = 20,
                   max = 1000,
                   value = 200
+                ),
+                sliderInput(
+                  inputId = "max_y2",
+                  label = "Maximum y-axis value:",
+                  min = 20,
+                  max = 1000,
+                  value = 110
                 )
               ),
               layout_columns(
@@ -212,47 +229,48 @@ ui <- page_navbar(
                                    .irs--shiny .irs-from,.irs--shiny .irs-to,.irs--shiny .irs-single {font-size: 14px;}
                                   "))
                 ),
+                #sliderInput(
+                #  inputId = "N_init3",
+                #  label = "Number of people (N):",
+                #  min = 1,
+                #  max = 1000,
+                #  value = 100
+                #),
+                #sliderInput(
+                #  inputId = "I_init3",
+                #  label = "Initial number of infected people (I_init):",
+                #  min = 1,
+                #  max = 100,
+                #  value = 1
+                #),
                 sliderInput(
-                  inputId = "N",
-                  label = "Number of people (N):",
-                  min = 1,
-                  max = 1000,
-                  value = 100
-                ),
-                sliderInput(
-                  inputId = "I_init",
-                  label = "Initial number of infected people (I_init):",
-                  min = 1,
-                  max = 100,
-                  value = 1
-                ),
-                sliderInput(
-                  inputId = "beta",
+                  inputId = "beta3",
                   label = 'Infection parameter (\\( \\beta \\)):',
                   min = 0.1,
                   max = 10,
                   value = 2
                 ),
                 sliderInput(
-                  inputId = "u",
-                  label = "Vaccination rate (\\( u \\)):",
-                  min = 0,
-                  max = 1,
-                  value = 0.5
-                ),
-                sliderInput(
-                  inputId = "sigma",
+                  inputId = "sigma3",
                   label = "Recovery rate (\\( \\sigma \\)):",
                   min = 0,
                   max = 1,
-                  value = 0.1
+                  value = 0.3
                 ),
                 sliderInput(
-                  inputId = "max_t",
+                  inputId = "u3",
+                  label = "Vaccination rate (\\( u \\)):",
+                  min = 0,
+                  max = 100,
+                  value = 0,
+                  step=1
+                ),
+                sliderInput(
+                  inputId = "max_t3",
                   label = "Maximum time:",
-                  min = 20,
-                  max = 1000,
-                  value = 100
+                  min = 2,
+                  max = 100,
+                  value = 30
                 )
               ),
               layout_columns(
@@ -313,54 +331,65 @@ ui <- page_navbar(
                 sliderInput(
                   inputId = "I_init_A",
                   label = "Initial number of infected people in population A (I_init_A):",
-                  min = 1,
+                  min = 0,
                   max = 100,
                   value = 1
                 ),
                 sliderInput(
                   inputId = "I_init_B",
                   label = "Initial number of infected people in population B (I_init_B):",
-                  min = 1,
+                  min = 0,
                   max = 100,
                   value = 1
                 ),
                 sliderInput(
                   inputId = "beta_AA",
                   label = 'Infection parameter from group A to A (\\( \\beta_{AA} \\)):',
-                  min = 0.1,
-                  max = 10,
-                  value = 2
+                  min = 0,
+                  max = 1,
+                  value = 0.5,
+                  step=0.01
                 ),
                 sliderInput(
                   inputId = "beta_BA",
                   label = 'Infection parameter from group B to A (\\( \\beta_{BA} \\)):',
-                  min = 0.1,
-                  max = 10,
-                  value = 2
+                  min = 0,
+                  max = 1,
+                  value = 0.5,
+                  step=0.01
                 ),
                 sliderInput(
                   inputId = "beta_AB",
                   label = 'Infection parameter from group A to B (\\( \\beta_{AB} \\)):',
-                  min = 0.1,
-                  max = 10,
-                  value = 2
+                  min = 0,
+                  max = 1,
+                  value = 0.5,
+                  step=0.01
                 ),
                 sliderInput(
                   inputId = "beta_BB",
                   label = 'Infection parameter from group B to B (\\( \\beta_{BB} \\)):',
-                  min = 0.1,
-                  max = 10,
-                  value = 2
-                ),
-                sliderInput(
-                  inputId = "sigma",
-                  label = "Recovery rate (\\( \\sigma \\)):",
-                  min = 0.0001,
+                  min = 0,
                   max = 1,
-                  value = 0.1
+                  value = 0.5,
+                  step=0.01
+                ),
+                #sliderInput(
+                #  inputId = "sigma4",
+                #  label = "Recovery rate (\\( \\sigma \\)):",
+                #  min = 0.0001,
+                #  max = 1,
+                #  value = 0.1
+                #),
+                sliderInput(
+                  inputId = "max_y4",
+                  label = "Maximum y-axis value:",
+                  min = 20,
+                  max = 2000,
+                  value = 500
                 ),
                 sliderInput(
-                  inputId = "max_t",
+                  inputId = "max_t4",
                   label = "Maximum time:",
                   min = 20,
                   max = 1000,
@@ -408,13 +437,14 @@ server <- function(input, output) {
   # Code for childhood vaccination plot
   output$distPlot_births_deaths <- renderPlot({
     
-    y = run_births_deaths(N_init = input$N_init,
-                          I_init = input$I_init,
+    y = run_births_deaths(N_init = 500,
+                          I_init = 1,
                           beta = input$beta,
                           sigma = input$sigma,
                           theta = input$theta,
                           mu = input$mu,
-                          max_t = input$max_t)
+                          max_t = input$max_t
+                          )
     
     y_long = gather(data.frame(y), 
                     key = variable, 
@@ -432,7 +462,7 @@ server <- function(input, output) {
     # plot the selected trends
     ggplot(filtered_data()) +
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
-      scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
+      scale_y_continuous(expand = c(0, 0), limits = c(0, input$max_y)) +
       scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
       scale_color_manual(values = my_colors_births_deaths) +
       xlab("Time") + ylab("Number of people") +
@@ -461,14 +491,15 @@ server <- function(input, output) {
   # Code for childhood vaccination plot
   output$distPlot_childhood_vaccination <- renderPlot({
     
-    y = run_child_vaccination(N_init = input$N_init, 
-                              I_init = input$I_init,
-                              beta = input$beta, 
-                              sigma = input$sigma,
-                              theta = input$theta,
-                              mu = input$mu,
-                              u = input$u,
-                              max_t = input$max_t)
+    y = run_child_vaccination(N_init = 500, 
+                              I_init = 1,
+                              beta = input$beta2, 
+                              sigma = input$sigma2,
+                              theta = input$theta2,
+                              mu = input$mu2,
+                              u = input$u2,
+                              max_t = input$max_t2
+                              )
     
     y_long = gather(data.frame(y), 
                     key = variable, 
@@ -486,8 +517,8 @@ server <- function(input, output) {
     # plot the selected trends
     ggplot(filtered_data()) +
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
-      scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
-      scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
+      scale_y_continuous(expand = c(0, 0), limits = c(0, input$max_y2)) +
+      scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t2*1.1)) + 
       scale_color_manual(values = my_colors) +
       xlab("Time") + ylab("Number of people") +
       theme_bw() +
@@ -515,12 +546,12 @@ server <- function(input, output) {
   # Code for emergency vaccination plot
   output$distPlot_emergency_vaccination <- renderPlot({
     
-    y = run_emergency_vaccination(N = input$N, 
-                                  I_init = input$I_init, 
-                                  beta = input$beta,
-                                  u = input$u,
-                                  sigma = input$sigma,
-                                  max_t = input$max_t)
+    y = run_emergency_vaccination(N = 1000, 
+                                  I_init = 1, 
+                                  beta = input$beta3,
+                                  u = input$u3,
+                                  sigma = input$sigma3,
+                                  max_t = input$max_t3)
     
     y_long = gather(data.frame(y), 
                     key = variable, 
@@ -538,8 +569,8 @@ server <- function(input, output) {
     # plot the selected trends
     ggplot(filtered_data()) +
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
-      scale_y_continuous(expand = c(0, 0), limits = c(-0.1, input$N_init)) +
-      scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
+      scale_y_continuous(expand = c(0, 0), limits = c(-0.1, 1000)) +
+      scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t3*1.1)) + 
       scale_color_manual(values = my_colors_emergency_vaccination) +
       xlab("Time") + ylab("Number of people") +
       theme_bw() +
@@ -575,8 +606,8 @@ server <- function(input, output) {
                           beta_BA = input$beta_BA,
                           beta_AB = input$beta_AB,
                           beta_BB = input$beta_BB,
-                          sigma = input$sigma,
-                          max_t = input$max_t)
+                          sigma = 0.1,
+                          max_t = input$max_t4)
     
     y_long = gather(data.frame(y), 
                     key = variable, 
@@ -594,8 +625,8 @@ server <- function(input, output) {
     # plot the selected trends
     ggplot(filtered_data()) +
       geom_line(aes(t, value, col = variable), linewidth = 2) + 
-      scale_y_continuous(expand = c(0, 0), limits = c(0, input$N)) +
-      scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t*1.1)) + 
+      scale_y_continuous(expand = c(0, 0), limits = c(0, input$max_y4)) +
+      scale_x_continuous(expand = c(0, 0), limits = c(0, input$max_t4*1.1)) + 
       scale_color_manual(values = my_colors_heterogeneity) +
       xlab("Time") + ylab("Number of people") +
       theme_bw() +
