@@ -48,4 +48,14 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+# OS files
 .DS_Store
+
+# SSL certs and secrets
+*.pem
+*.crt
+*.key
+*.htpasswd
+
+# serve session files
+*.log

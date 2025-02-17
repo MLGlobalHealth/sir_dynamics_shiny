@@ -1,0 +1,25 @@
+services:
+  simple:
+    image: sir_dynamics:simple
+    container_name: simple
+    restart: always
+  complicated:
+    image: sir_dynamics:complicated
+    container_name: complicated
+    restart: always
+    # command: 'shiny\:\:runApp\("complicated_models", host="0.0.0.0", port=5000\)'
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      - ./.htpasswd:/etc/nginx/.htpasswd
+      - ./certs/:/etc/nginx/certs/
+      - ./logs/:/var/log/nginx/
+    depends_on:
+      - simple
+      - complicated
