@@ -1,4 +1,4 @@
-# sir_dynamics_shiny
+# Shiny app code for exploring the dynamics of compartmental models
 
 ## Serve
 This setup predominantly follows [this blog](https://www.charlesbordet.com/en/guide-shiny-aws/#how-to-set-up-your-new-ssltls-certificates-with-nginx)
